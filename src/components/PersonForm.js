@@ -33,6 +33,8 @@ const PersonForm = (props) => {
     if (found) {
       const person = persons.find((n) => n.name === newName);
       const id = person.id;
+      console.log(id);
+      console.log(personObject);
       if (window.confirm(`${newName} already found, update nr?`)) {
         personService
           .update(id, personObject)
@@ -63,16 +65,27 @@ const PersonForm = (props) => {
     }
     console.log("onnistu");
 
-    personService.create(personObject).then((returnedPerson) => {
-      setPersons(persons.concat(returnedPerson));
-      setErrorMessage(`${personObject.name} created succesfully`);
-      setTimeout(() => {
-        setErrorMessage(null);
-      }, 5000);
+    personService
+      .create(personObject)
+      .then((returnedPerson) => {
+        setPersons(persons.concat(returnedPerson));
+        setErrorMessage(`${personObject.name} created succesfully`);
+        setTimeout(() => {
+          setErrorMessage(null);
+        }, 5000);
 
-      setNewName("");
-      setNewNumber("");
-    });
+        setNewName("");
+        setNewNumber("");
+      })
+      .catch((error) => {
+        console.log(error.response.data);
+        setErrorMessage(`${error.response.data.error}`);
+        setRedError(true);
+        setTimeout(() => {
+          setErrorMessage(null);
+          setRedError(false);
+        }, 5000);
+      });
   };
 
   return (
